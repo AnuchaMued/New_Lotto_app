@@ -1,23 +1,24 @@
+// backend/routes/authRoutes.js
 const express = require("express");
 const router = express.Router();
 const {
   registerUser,
   loginUser,
-  getUserProfile,
+  getMe,
   updateUserProfile,
-} = require("../controllers/authController");
-const { protect } = require("../middleware/authMiddleware");
+  changePassword,
+} = require("../controllers/authController"); // ตรวจสอบเส้นทางให้ถูกต้อง
 
-// Public routes
+const { protect } = require("../middleware/authMiddleware"); // ตรวจสอบเส้นทางให้ถูกต้อง
+
+// Public Routes
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-// Protected routes
-router.route("/profile")
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
-
-// Admin-only route (ตัวอย่าง)
-// router.get("/admin", protect, admin, adminController);
+// Private Routes (ต้องมีการยืนยันตัวตนด้วย protect middleware)
+// ตรวจสอบให้แน่ใจว่า getMe, updateUserProfile, changePassword เป็นฟังก์ชันที่ถูก export ออกมา
+router.get("/profile", protect, getMe);
+router.put("/profile", protect, updateUserProfile);
+router.put("/change-password", protect, changePassword);
 
 module.exports = router;

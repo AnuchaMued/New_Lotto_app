@@ -4,6 +4,8 @@ import InputField from "../../components/InputField/InputField";
 import Button from "../../components/Button/Button";
 import Notification from "../../components/Notification/Notification";
 import styles from "./ProfilePage.module.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function ProfilePage() {
   // State สำหรับข้อมูลผู้ใช้
@@ -26,73 +28,121 @@ function ProfilePage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [notification, setNotification] = useState({ message: "", type: "" });
 
-  // จำลองข้อมูลผู้ใช้เริ่มต้น (สามารถโหลดจาก API จริงได้ในอนาคต)
+  const navigate = useNavigate();
+
+  // useEffect เพื่อดึงข้อมูลโปรไฟล์เมื่อ Component โหลด
   useEffect(() => {
-    // โหลดข้อมูลจาก Local Storage หรือ Mock Data
-    const savedProfile = JSON.parse(localStorage.getItem("userProfile")) || {};
-    setFirstName(savedProfile.firstName || "");
-    setLastName(savedProfile.lastName || "");
-    setPhoneNumber(savedProfile.phoneNumber || "");
-    setBankAccountNumber(savedProfile.bankAccountNumber || "");
-    setBankName(savedProfile.bankName || "");
-  }, []);
+    const userToken = localStorage.getItem("userToken");
 
-  // Handler สำหรับการเปลี่ยนแปลงข้อมูลทั่วไป
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault();
-    setProfileErrors({}); // Clear previous errors
-    setNotification({ message: "", type: "" });
+    if (!userToken) {
+      navigate("/login");
+      return;
+    }
 
+    const fetchUserProfile = async () => {
+      try {
+        setIsUpdatingProfile(true); // ใช้ loading state ของการอัปเดตโปรไฟล์สำหรับโหลดด้วย
+        const response = await axios.get("/api/auth/profile", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        });
+        const fetchedProfile = response.data;
+
+        // ตั้งค่า state ด้วยข้อมูลที่ดึงมา
+        setFirstName(fetchedProfile.firstName || "");
+        setLastName(fetchedProfile.lastName || "");
+        setPhoneNumber(fetchedProfile.phoneNumber || "");
+        setBankAccountNumber(fetchedProfile.bankAccountNumber || "");
+        setBankName(fetchedProfile.bankName || "");
+        // อัปเดต userProfile ใน localStorage ด้วยข้อมูลล่าสุด
+        localStorage.setItem("userProfile", JSON.stringify(fetchedProfile));
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setNotification({
+          message:
+            error.response?.data?.message || "ไม่สามารถโหลดข้อมูลโปรไฟล์ได้",
+          type: "error",
+        });
+        // ถ้าเกิด Error เช่น Token หมดอายุ ให้ Logout
+        if (error.response?.status === 401) {
+          localStorage.removeItem("userToken");
+          localStorage.removeItem("userProfile");
+          navigate("/login");
+        }
+      } finally {
+        setIsUpdatingProfile(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [navigate]);
+
+  // ฟังก์ชันสำหรับ Validate ฟอร์มโปรไฟล์
+  const validateProfileForm = () => {
     let errors = {};
-    if (!firstName.trim()) errors.firstName = "กรุณากรอกชื่อ";
+    if (!firstName.trim()) errors.firstName = "กรุณากรอกชื่อจริง";
     if (!lastName.trim()) errors.lastName = "กรุณากรอกนามสกุล";
-
-    // Basic phone number validation (10 digits)
     if (!phoneNumber.trim()) {
       errors.phoneNumber = "กรุณากรอกเบอร์โทรศัพท์";
-    } else if (!/^\d{10}$/.test(phoneNumber.trim())) {
-      errors.phoneNumber = "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก";
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+      errors.phoneNumber = "เบอร์โทรศัพท์ไม่ถูกต้อง (10 หลัก)";
     }
+    // สามารถเพิ่ม validation สำหรับ bankAccountNumber และ bankName ได้ตามต้องการ
+    return errors;
+  };
 
-    if (!bankAccountNumber.trim()) {
-      errors.bankAccountNumber = "กรุณากรอกเลขบัญชีธนาคาร";
-    } else if (!/^\d+$/.test(bankAccountNumber.trim())) {
-      errors.bankAccountNumber = "เลขบัญชีธนาคารต้องเป็นตัวเลขเท่านั้น";
-    }
+  // ฟังก์ชันสำหรับจัดการการอัปเดตข้อมูลโปรไฟล์
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
 
-    if (!bankName.trim()) errors.bankName = "กรุณากรอกชื่อธนาคาร";
+    const errors = validateProfileForm();
+    setProfileErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      setProfileErrors(errors);
-      setNotification({
-        message: "โปรดแก้ไขข้อผิดพลาดในข้อมูลส่วนตัว",
-        type: "error",
-      });
+      setNotification({ message: "โปรดแก้ไขข้อผิดพลาดในฟอร์ม", type: "error" });
       return;
     }
 
     setIsUpdatingProfile(true);
+    setNotification({ message: "", type: "" }); // Clear previous notifications
 
-    // จำลองการส่งข้อมูลไปยัง Server
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+      const userToken = localStorage.getItem("userToken");
+      if (!userToken) {
+        setNotification({
+          message: "ไม่พบโทเค็นผู้ใช้ กรุณาเข้าสู่ระบบใหม่",
+          type: "error",
+        });
+        navigate("/login");
+        return;
+      }
 
-      const updatedProfile = {
-        firstName,
-        lastName,
-        phoneNumber,
-        bankAccountNumber,
-        bankName,
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
       };
-      localStorage.setItem("userProfile", JSON.stringify(updatedProfile)); // Save to local storage
+
+      const { data } = await axios.put(
+        "/api/auth/profile",
+        { firstName, lastName, phoneNumber, bankAccountNumber, bankName },
+        config
+      );
+
+      // อัปเดตข้อมูลใน Local Storage หลังอัปเดตสำเร็จ
+      localStorage.setItem("userProfile", JSON.stringify(data));
 
       setNotification({
-        message: "อัปเดตข้อมูลส่วนตัวสำเร็จ!",
+        message: "บันทึกข้อมูลโปรไฟล์สำเร็จ!",
         type: "success",
       });
     } catch (error) {
+      console.error("Error updating user profile:", error);
       setNotification({
-        message: "เกิดข้อผิดพลาดในการอัปเดตข้อมูล",
+        message:
+          error.response?.data?.message || "ไม่สามารถบันทึกข้อมูลโปรไฟล์ได้",
         type: "error",
       });
     } finally {
@@ -100,49 +150,56 @@ function ProfilePage() {
     }
   };
 
-  // Handler สำหรับการเปลี่ยนรหัสผ่าน
+  // ฟังก์ชันสำหรับจัดการการเปลี่ยนรหัสผ่าน
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    setPasswordError("");
-    setNotification({ message: "", type: "" });
 
-    if (!newPassword) {
-      setPasswordError("กรุณากรอกรหัสผ่านใหม่");
-      return;
-    }
-    // Password complexity: at least 6 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`])[A-Za-z\d!@#$%^&*()_+={}\[\]|\\:;"'<>,.?/~`]{6,}$/;
-
-    if (newPassword.length < 6) {
-      setPasswordError("รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร");
-      return;
-    }
-    if (!passwordRegex.test(newPassword)) {
-      setPasswordError(
-        "รหัสผ่านต้องมีตัวพิมพ์ใหญ่, ตัวพิมพ์เล็ก, ตัวเลข, และอักขระพิเศษอย่างน้อยอย่างละ 1 ตัว"
-      );
+    if (!newPassword || !confirmNewPassword) {
+      setPasswordError("กรุณากรอกรหัสผ่านใหม่และยืนยันรหัสผ่าน");
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      setPasswordError("รหัสผ่านใหม่และยืนยันรหัสผ่านไม่ตรงกัน");
+      setPasswordError("รหัสผ่านใหม่และการยืนยันไม่ตรงกัน");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordError("รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร");
       return;
     }
 
     setIsChangingPassword(true);
+    setNotification({ message: "", type: "" });
 
-    // จำลองการส่งข้อมูลรหัสผ่านไปยัง Server
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call
+      const userToken = localStorage.getItem("userToken");
+      if (!userToken) {
+        setNotification({
+          message: "ไม่พบโทเค็นผู้ใช้ กรุณาเข้าสู่ระบบใหม่",
+          type: "error",
+        });
+        navigate("/login");
+        return;
+      }
 
-      // ในชีวิตจริง ควรส่งไป Hash และบันทึกใน Database
-      // localStorage.setItem('userPassword', newPassword); // ไม่แนะนำในชีวิตจริง
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userToken}`,
+        },
+      };
+
+      await axios.put("/api/auth/change-password", { newPassword }, config);
       setNotification({ message: "เปลี่ยนรหัสผ่านสำเร็จ!", type: "success" });
       setNewPassword("");
       setConfirmNewPassword("");
+      setPasswordError("");
     } catch (error) {
+      console.error("Error changing password:", error);
+      setPasswordError(
+        error.response?.data?.message || "ไม่สามารถเปลี่ยนรหัสผ่านได้"
+      );
       setNotification({
-        message: error.message || "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน",
+        message: error.response?.data?.message || "ไม่สามารถเปลี่ยนรหัสผ่านได้",
         type: "error",
       });
     } finally {
@@ -152,39 +209,46 @@ function ProfilePage() {
 
   return (
     <div className={styles.profilePage}>
-      <h2 className={styles.title}>ข้อมูลผู้ใช้งาน</h2>
-      <p className={styles.subtitle}>จัดการข้อมูลส่วนตัวและรหัสผ่านของคุณ</p>
+      <h2 className={styles.title}>ข้อมูลโปรไฟล์</h2>
 
-      {/* Profile Information Section */}
-      <div className={styles.sectionCard}>
-        <h3 className={styles.sectionHeader}>ข้อมูลส่วนตัว</h3>
-        <form onSubmit={handleProfileUpdate} className={styles.form}>
+      <div className={styles.section}>
+        <h3 className={styles.sectionHeader}>รายละเอียดส่วนตัว</h3>
+        <form onSubmit={handleUpdateProfile} className={styles.form}>
           <InputField
-            label="ชื่อ:"
+            label="ชื่อจริง:"
             type="text"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => {
+              setFirstName(e.target.value);
+              setProfileErrors({ ...profileErrors, firstName: "" });
+            }}
             id="firstName"
-            placeholder="กรอกชื่อ"
-            error={profileErrors.firstName} // Display error
+            placeholder="กรอกชื่อจริง"
+            error={profileErrors.firstName}
           />
           <InputField
             label="นามสกุล:"
             type="text"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => {
+              setLastName(e.target.value);
+              setProfileErrors({ ...profileErrors, lastName: "" });
+            }}
             id="lastName"
             placeholder="กรอกนามสกุล"
-            error={profileErrors.lastName} // Display error
+            error={profileErrors.lastName}
           />
           <InputField
             label="เบอร์โทรศัพท์:"
-            type="tel"
+            type="text"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => {
+              setPhoneNumber(e.target.value);
+              setProfileErrors({ ...profileErrors, phoneNumber: "" });
+            }}
             id="phoneNumber"
-            placeholder="ตัวอย่าง: 0812345678"
-            error={profileErrors.phoneNumber} // Display error
+            placeholder="กรอกเบอร์โทรศัพท์"
+            error={profileErrors.phoneNumber}
           />
           <InputField
             label="เลขบัญชีธนาคาร:"
@@ -192,8 +256,7 @@ function ProfilePage() {
             value={bankAccountNumber}
             onChange={(e) => setBankAccountNumber(e.target.value)}
             id="bankAccountNumber"
-            placeholder="กรอกเลขบัญชี"
-            error={profileErrors.bankAccountNumber} // Display error
+            placeholder="กรอกเลขบัญชีธนาคาร"
           />
           <InputField
             label="ชื่อธนาคาร:"
@@ -201,8 +264,7 @@ function ProfilePage() {
             value={bankName}
             onChange={(e) => setBankName(e.target.value)}
             id="bankName"
-            placeholder="เช่น กสิกรไทย, ไทยพาณิชย์"
-            error={profileErrors.bankName} // Display error
+            placeholder="กรอกชื่อธนาคาร"
           />
           <Button
             type="submit"
@@ -210,13 +272,12 @@ function ProfilePage() {
             disabled={isUpdatingProfile}
             className={styles.submitButton}
           >
-            {isUpdatingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
+            {isUpdatingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูลโปรไฟล์"}
           </Button>
         </form>
       </div>
 
-      {/* Change Password Section */}
-      <div className={styles.sectionCard}>
+      <div className={styles.section}>
         <h3 className={styles.sectionHeader}>เปลี่ยนรหัสผ่าน</h3>
         <form onSubmit={handleChangePassword} className={styles.form}>
           <InputField
@@ -231,7 +292,7 @@ function ProfilePage() {
             placeholder="กรอกรหัสผ่านใหม่ (อย่างน้อย 6 ตัว)"
           />
           <InputField
-            label="ยืนยันรหัสผ่านใหม่:"
+            label="ยืนยันรหัสผ่านใหม่:ᐟ"
             type="password"
             value={confirmNewPassword}
             onChange={(e) => {

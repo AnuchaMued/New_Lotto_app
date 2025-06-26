@@ -1,152 +1,131 @@
 // backend/controllers/authController.js
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const asyncHandler = require("express-async-handler");
+const User = require("../models/User"); // ตรวจสอบว่าเส้นทางถูกต้อง
 
-// @desc    Register a new user
+// Helper function to generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "1h", // Token หมดอายุใน 1 ชั่วโมง
+  });
+};
+
+// @desc    Register new user
 // @route   POST /api/auth/register
 // @access  Public
-const registerUser = async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
-  try {
-    // ตรวจสอบว่ามีผู้ใช้ด้วย username หรือ email นี้อยู่แล้วหรือไม่
-    const userExistsByUsername = await User.findOne({ username });
-    if (userExistsByUsername) {
-      return res.status(400).json({ message: "Username is already taken" });
-    }
-    const userExistsByEmail = await User.findOne({ email });
-    if (userExistsByEmail) {
-      return res.status(400).json({ message: "Email is already registered" });
-    }
-
-    // สร้างผู้ใช้ใหม่
-    const user = await User.create({
-      username,
-      email,
-      password,
-    });
-
-    // สร้าง JWT Token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: token,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      bankAccountNumber: user.bankAccountNumber,
-      bankName: user.bankName,
-      credit: user.credit,
-    });
-  } catch (error) {
-    if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((val) => val.message);
-      return res.status(400).json({ message: messages.join(", ") });
-    }
-    res.status(500).json({ message: "Server Error: " + error.message });
+  if (!username || !email || !password) {
+    res.status(400);
+    throw new Error("Please add all fields");
   }
-};
 
-// @desc    Authenticate user & get token
-// @route   POST /api/auth/login
-// @access  Public
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Invalid credentials (email not found)" });
-    }
-
-    const isMatch = await user.matchPassword(password);
-
-    if (!isMatch) {
-      return res
-        .status(400)
-        .json({ message: "Invalid credentials (password incorrect)" });
-    }
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
-    res.json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: token,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      phoneNumber: user.phoneNumber,
-      bankAccountNumber: user.bankAccountNumber,
-      bankName: user.bankName,
-      credit: user.credit,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error: " + error.message });
+  // Check if user exists
+  const userExists = await User.findOne({ email });
+  if (userExists) {
+    res.status(400);
+    throw new Error("User already exists");
   }
-};
 
-// @desc    Get user profile (Private Route)
-// @route   GET /api/auth/profile
-// @access  Private
-const getUserProfile = async (req, res) => {
-  const user = await User.findById(req.user.id).select("-password");
+  // Hash password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // Create user
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+  });
 
   if (user) {
-    res.json({
-      _id: user._id,
+    res.status(201).json({
+      _id: user.id,
       username: user.username,
       email: user.email,
-      firstName: user.firstName,
+      token: generateToken(user._id),
+      role: user.role, // Include role if you have it in your User model
+    });
+  } else {
+    res.status(400);
+    throw new Error("Invalid user data");
+  }
+});
+
+// @desc    Authenticate a user
+// @route   POST /api/auth/login
+// @access  Public
+const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check for user email
+  const user = await User.findOne({ email });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    res.json({
+      _id: user.id,
+      username: user.username,
+      email: user.email,
+      firstName: user.firstName, // เพิ่มฟิลด์ที่ต้องการส่งกลับไป
       lastName: user.lastName,
       phoneNumber: user.phoneNumber,
       bankAccountNumber: user.bankAccountNumber,
       bankName: user.bankName,
-      credit: user.credit,
-      role: user.role,
+      token: generateToken(user._id),
+      role: user.role, // Include role
     });
   } else {
-    res.status(404).json({ message: "User not found" });
+    res.status(400);
+    throw new Error("Invalid credentials");
   }
-};
+});
 
-// @desc    Update user profile (Private Route)
+// @desc    Get user profile
+// @route   GET /api/auth/profile
+// @access  Private
+const getMe = asyncHandler(async (req, res) => {
+  // req.user ถูกแนบมาจาก middleware 'protect'
+  // โดย req.user จะเป็น object ของผู้ใช้ที่ดึงมาจากฐานข้อมูลแล้ว (id, username, email, etc.)
+  if (req.user) {
+    // เนื่องจาก req.user.select('-password') ถูกใช้ใน middleware แล้ว
+    // ข้อมูลผู้ใช้ที่ส่งมาใน req.user จะไม่มี password
+    res.status(200).json(req.user); // ส่งข้อมูลผู้ใช้กลับไป
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+// @desc    Update user profile
 // @route   PUT /api/auth/profile
 // @access  Private
-const updateUserProfile = async (req, res) => {
+const updateUserProfile = asyncHandler(async (req, res) => {
+  // req.user ถูกแนบมาจาก middleware 'protect'
+  const userId = req.user._id; // ใช้ _id จาก req.user
+
+  const { firstName, lastName, phoneNumber, bankAccountNumber, bankName } =
+    req.body;
+
   try {
-    // <--- เพิ่ม try block ตรงนี้
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(userId);
 
     if (user) {
-      // อัปเดตฟิลด์ที่ส่งมา ถ้ามีค่าใหม่ให้ใช้ค่าใหม่ ถ้าไม่มีให้ใช้ค่าเดิม
-      user.username = req.body.username || user.username; // อาจจะไม่อัปเดต username ผ่าน profile page ก็ได้ แต่ถ้ามีก็ควรใส่ไว้
-      user.email = req.body.email || user.email; // อาจจะไม่อัปเดต email ผ่าน profile page ก็ได้
-      user.firstName = req.body.firstName || user.firstName;
-      user.lastName = req.body.lastName || user.lastName;
-      user.phoneNumber = req.body.phoneNumber || user.phoneNumber;
+      // อัปเดตฟิลด์ที่ส่งมาใน req.body ถ้ามีค่า หรือใช้ค่าเดิม
+      user.firstName = firstName !== undefined ? firstName : user.firstName;
+      user.lastName = lastName !== undefined ? lastName : user.lastName;
+      user.phoneNumber =
+        phoneNumber !== undefined ? phoneNumber : user.phoneNumber;
       user.bankAccountNumber =
-        req.body.bankAccountNumber || user.bankAccountNumber;
-      user.bankName = req.body.bankName || user.bankName; // ตรวจสอบและอัปเดตรหัสผ่าน ถ้ามีการส่งรหัสผ่านใหม่มา
+        bankAccountNumber !== undefined
+          ? bankAccountNumber
+          : user.bankAccountNumber;
+      user.bankName = bankName !== undefined ? bankName : user.bankName;
 
-      if (req.body.password) {
-        user.password = req.body.password; // Mongoose pre-save hook จะจัดการการ hash
-      }
+      const updatedUser = await user.save(); // บันทึกการเปลี่ยนแปลง
 
-      const updatedUser = await user.save(); // นี่คือการบันทึกข้อมูลที่อัปเดตลงใน MongoDB
-
-      res.json({
+      res.status(200).json({
         _id: updatedUser._id,
         username: updatedUser.username,
         email: updatedUser.email,
@@ -155,27 +134,63 @@ const updateUserProfile = async (req, res) => {
         phoneNumber: updatedUser.phoneNumber,
         bankAccountNumber: updatedUser.bankAccountNumber,
         bankName: updatedUser.bankName,
-        credit: updatedUser.credit,
         role: updatedUser.role,
+        // ไม่ต้องส่ง token กลับมาตรงนี้ก็ได้ถ้าไม่มีการเปลี่ยน
+        // หากต้องการอัปเดต token ใหม่ ให้ generateToken(updatedUser._id)
       });
     } else {
-      // ถ้าไม่พบผู้ใช้ด้วย ID ที่แนบมากับ Token (ไม่น่าเกิดขึ้นถ้า protect middleware ทำงานถูกต้อง)
-      res.status(404).json({ message: "User not found" });
+      res.status(404);
+      throw new Error("User not found");
     }
   } catch (error) {
-    // <--- เพิ่ม catch block ตรงนี้เพื่อจับ error จาก user.save()
-    console.error("Error updating user profile:", error); // พิมพ์ error ใน console ของ server // ตรวจสอบว่าเป็น ValidationError จาก Mongoose หรือไม่
-    if (error.name === "ValidationError") {
-      const messages = Object.values(error.errors).map((val) => val.message);
-      return res.status(400).json({ message: messages.join(", ") });
-    } // สำหรับ error อื่นๆ (เช่น MongoDB connection issues)
-    res.status(500).json({ message: "Server Error: " + error.message });
+    console.error("Error updating user profile:", error);
+    res.status(500);
+    throw new Error("Server error during profile update");
   }
-};
+});
+
+// @desc    Change user password
+// @route   PUT /api/auth/change-password
+// @access  Private
+const changePassword = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { newPassword } = req.body;
+
+  if (!newPassword) {
+    res.status(400);
+    throw new Error("Please provide a new password");
+  }
+
+  // Basic password validation (you might want more robust validation)
+  if (newPassword.length < 6) {
+    res.status(400);
+    throw new Error("Password must be at least 6 characters long");
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (user) {
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+      await user.save();
+      res.status(200).json({ message: "Password updated successfully" });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500);
+    throw new Error("Server error during password change");
+  }
+});
 
 module.exports = {
   registerUser,
   loginUser,
-  getUserProfile,
+  getMe,
   updateUserProfile,
+  changePassword, // อย่าลืม export ฟังก์ชันเปลี่ยนรหัสผ่าน
 };
