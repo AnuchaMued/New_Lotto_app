@@ -1,0 +1,73 @@
+/* src/pages/Auth/AuthPage.module.css */
+.authContainer {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #2d3748;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4a5568;
+  max-width: 500px; /* Limit width for auth forms */
+  margin: 40px auto; /* Center the form */
+}
+
+.title {
+  font-size: 2.2rem;
+  color: #f8d71e;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Space between input fields */
+  align-items: center;
+}
+
+/* Override InputField default styles for specific usage if needed, or let InputField manage its own styles */
+.form .inputGroup {
+  width: 100%;
+  max-width: 350px; /* Max width for inputs within the form */
+}
+
+.authButton {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 350px; /* Match input field width */
+}
+
+.authLinkText {
+  margin-top: 20px;
+  font-size: 0.95em;
+  color: #a0aec0;
+}
+
+.authLink {
+  color: #63b3ed; /* Blue for links */
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s ease-in-out;
+}
+
+.authLink:hover {
+  color: #4299e1; /* Darker blue on hover */
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .authContainer {
+    padding: 20px 15px;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+    margin: 20px auto;
+  }
+  .title {
+    font-size: 1.8rem;
+  }
+  .form .inputGroup,
+  .authButton {
+    max-width: 100%; /* Full width on smaller screens */
+  }
+}

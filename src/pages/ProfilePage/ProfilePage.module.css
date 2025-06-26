@@ -1,0 +1,99 @@
+/* src/pages/ProfilePage/ProfilePage.module.css */
+
+.profilePage {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #2d3748;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4a5568;
+  max-width: 800px; /* จำกัดความกว้างของหน้า */
+  margin: 30px auto; /* จัดกลาง */
+}
+
+.title {
+  font-size: 2.2rem;
+  color: #f8d71e;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #a0aec0;
+  margin-bottom: 30px;
+}
+
+.sectionCard {
+  background-color: #3c4251;
+  border-radius: 10px;
+  padding: 25px;
+  border: 1px solid #636b78;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px; /* ระยะห่างระหว่าง Section */
+  text-align: left; /* จัดการข้อความในฟอร์มให้อยู่ซ้าย */
+}
+
+.sectionHeader {
+  font-size: 1.8rem;
+  color: #63b3ed;
+  margin-bottom: 25px;
+  font-weight: 600;
+  text-align: center; /* หัวข้ออยู่กลาง */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* ระยะห่างระหว่าง InputField */
+  max-width: 400px; /* จำกัดความกว้างของฟอร์ม */
+  margin: 0 auto; /* จัดกลางฟอร์ม */
+}
+
+.submitButton {
+  margin-top: 10px; /* ระยะห่างด้านบนปุ่ม */
+  width: 100%; /* ให้ปุ่มเต็มความกว้างของฟอร์ม */
+  padding: 12px 20px; /* เพิ่มขนาดปุ่ม */
+  font-size: 1.1rem;
+}
+
+.errorText {
+  color: #fc8181; /* สีแดงสำหรับข้อผิดพลาด */
+  font-size: 0.9em;
+  margin-top: -10px; /* ดึงขึ้นมาใกล้ InputField */
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .profilePage {
+    padding: 20px 15px;
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+    margin: 15px auto;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .sectionCard {
+    padding: 20px 15px;
+    margin-bottom: 20px;
+  }
+
+  .sectionHeader {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+
+  .form {
+    max-width: unset; /* ให้ฟอร์มเต็มความกว้างที่มี */
+  }
+}

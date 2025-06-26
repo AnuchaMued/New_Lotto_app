@@ -1,0 +1,87 @@
+/* src/components/Notification/Notification.module.css */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #4a5568; /* พื้นหลัง Notification */
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* เงาเข้มขึ้น */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  min-width: 250px;
+  max-width: 350px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInSlideDown 0.3s forwards;
+  color: #e2e8f0; /* สีข้อความหลัก */
+}
+
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification.success {
+  border-left: 5px solid #48bb78; /* Green border */
+}
+
+.notification.error {
+  border-left: 5px solid #e53e3e; /* Red border */
+}
+
+.notification.info {
+  border-left: 5px solid #63b3ed; /* Blue border */
+}
+
+.icon {
+  font-size: 1.5em;
+}
+
+.success .icon {
+  color: #48bb78;
+}
+.error .icon {
+  color: #e53e3e;
+}
+.info .icon {
+  color: #63b3ed;
+}
+
+.message {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1rem;
+  color: inherit; /* ให้ใช้สีข้อความหลักของ Notification */
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  color: #a0aec0; /* สีปิดปุ่ม */
+  cursor: pointer;
+  padding: 5px;
+}
+
+.closeButton:hover {
+  color: #f8d71e; /* สีเหลืองทองเมื่อโฮเวอร์ */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .notification {
+    top: 15px;
+    right: 15px;
+    left: 15px;
+    max-width: unset;
+  }
+}

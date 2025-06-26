@@ -1,0 +1,154 @@
+/* src/pages/ResultPage/ResultPage.module.css */
+.resultPage {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #2d3748; /* พื้นหลังของ Card เป็นสีเทาเข้ม */
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); /* เงาเข้มขึ้น */
+  border: 1px solid #4a5568; /* เพิ่มขอบเล็กน้อย */
+}
+
+.title {
+  font-size: 2.2rem;
+  color: #f8d71e; /* สีเหลืองทอง */
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.summaryCard {
+  background-color: #4a5568; /* สีพื้นหลังของ Summary Card */
+  border: 1px solid #636b78;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.summaryItem {
+  font-size: 1.1em;
+  margin: 10px 0;
+  color: #e2e8f0; /* สีเทาอ่อนสำหรับข้อความ */
+}
+
+.predictionType {
+  /* เพิ่มอันนี้ */
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #63b3ed; /* สีฟ้าสำหรับประเภทการทาย */
+}
+
+.predictionNumber {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #f8d71e; /* สีเหลืองทองสำหรับตัวเลขที่ทาย */
+  letter-spacing: 2px;
+}
+
+.couponCode {
+  font-size: 1.1em;
+  font-weight: 500;
+  color: #a0aec0; /* สีเทาอ่อน */
+}
+
+.loadingSection {
+  margin: 40px 0;
+  font-size: 1.2em;
+  color: #a0aec0;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.2); /* สีอ่อนลง */
+  border-top: 4px solid #63b3ed; /* สีฟ้าสำหรับ spinner */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.actualResultSection {
+  margin-top: 40px;
+}
+
+.resultLabel {
+  font-size: 1.2em;
+  color: #f8d71e; /* สีเหลืองทอง */
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.actualNumber {
+  font-size: 3em;
+  font-weight: bold;
+  color: #48bb78; /* สีเขียวสำหรับผลจริง (Success color) */
+  margin-bottom: 30px;
+  letter-spacing: 3px;
+}
+
+.resultBox {
+  padding: 25px;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* เงาเข้มขึ้น */
+}
+
+.winner {
+  background-color: #2f855a; /* เขียวเข้มขึ้น */
+  border: 2px solid #38a169;
+  color: #e6fffa; /* ข้อความสีอ่อน */
+}
+
+.loser {
+  background-color: #c53030; /* แดงเข้มขึ้น */
+  border: 2px solid #e53e3e;
+  color: #fff5f5; /* ข้อความสีอ่อน */
+}
+
+.resultEmoji {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+
+.resultBox h3 {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: inherit; /* ให้ใช้สีของ parent (.winner/.loser) */
+}
+
+.resultBox p {
+  font-size: 1.1em;
+  color: inherit; /* ให้ใช้สีของ parent (.winner/.loser) */
+}
+
+.backButton {
+  margin-top: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .title {
+    font-size: 1.8rem;
+  }
+  .predictionNumber {
+    font-size: 1.2em;
+  }
+  .actualNumber {
+    font-size: 2.2em;
+  }
+  .resultEmoji {
+    font-size: 2.5em;
+  }
+  .resultBox h3 {
+    font-size: 1.5em;
+  }
+}

@@ -1,0 +1,179 @@
+/* src/pages/PredictionHistoryPage/PredictionHistoryPage.module.css */
+.predictionHistoryPage {
+  padding: 30px 20px;
+  text-align: center;
+  background-color: #2d3748; /* พื้นหลังของ Card เป็นสีเทาเข้ม */
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid #4a5568;
+  width: 100%;
+  max-width: 900px; /* จำกัดความกว้างเพื่อให้อ่านง่าย */
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 2.2rem;
+  color: #f8d71e;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.noPredictionMessage {
+  font-size: 1.1rem;
+  color: #a0aec0;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #4a5568;
+  border-radius: 8px;
+  border: 1px dashed #636b78;
+}
+
+.predictionList {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(280px, 1fr)
+  ); /* Responsive grid */
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.predictionCard {
+  background-color: #4a5568; /* สีพื้นหลัง Card รายการโพย */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #636b78;
+}
+
+.cardHeader {
+  background-color: #3c4251; /* สีเข้มขึ้นสำหรับ Header Card */
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #636b78;
+  position: relative;
+}
+
+.betType {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #f8d71e; /* สีเหลืองทองสำหรับประเภทการทาย */
+  font-weight: 600;
+}
+
+.statusBadge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.85em;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.statusBadge.pending {
+  background-color: #f6ad55; /* ส้ม */
+}
+
+.statusBadge.processed {
+  background-color: #48bb78; /* เขียว */
+}
+
+.cardBody {
+  padding: 20px;
+  text-align: left;
+  flex-grow: 1; /* ทำให้ส่วน Body ขยายเต็มที่ */
+}
+
+.label {
+  font-size: 0.9em;
+  color: #a0aec0; /* สีเทาอ่อนสำหรับ Label */
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+/* .receiptNumber, <<< ลบออก */
+.creditUsed,
+.date {
+  font-size: 1.2em;
+  color: #e2e8f0;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+/* .receiptNumber { <<< ลบออก */
+/* color: #63B3ED; */
+/* } */
+.creditUsed {
+  color: #48bb78; /* สีเขียว */
+}
+
+.predictionNumber {
+  color: #f8d71e; /* สีเหลืองทองสำหรับตัวเลขที่ทาย */
+  font-size: 1.5em;
+  letter-spacing: 1px;
+}
+
+.editInputContainer {
+  margin-bottom: 15px;
+}
+
+.editInputField {
+  background-color: #2d3748; /* พื้นหลัง Input สำหรับแก้ไข */
+  color: #f8d71e; /* ตัวหนังสือสีเหลืองทอง */
+  border-color: #636b78; /* ขอบ Input */
+  width: 100px; /* กำหนดความกว้างให้พอดี */
+  text-align: center;
+  margin: 0 auto; /* จัดกลาง */
+  display: block; /* ให้ input เป็น block เพื่อจัดกลางได้ */
+}
+.editInputField:focus {
+  border-color: #4299e1;
+}
+
+.editErrorText {
+  color: #fc8181;
+  font-size: 0.85em;
+  margin-top: 5px;
+}
+
+.cardActions {
+  padding: 15px;
+  border-top: 1px solid #636b78;
+  display: flex;
+  justify-content: flex-end; /* จัดปุ่มไปทางขวา */
+  gap: 10px;
+  background-color: #3c4251; /* สีเข้มขึ้นสำหรับ Action Bar */
+}
+
+.actionButton {
+  padding: 8px 15px;
+  font-size: 0.9rem;
+}
+.actionButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .predictionHistoryPage {
+    padding: 20px 15px;
+    box-shadow: none; /* บนมือถือลดเงาลง */
+    border: none;
+    background-color: transparent; /* ให้เป็นพื้นหลังหลักของ body */
+  }
+  .predictionList {
+    grid-template-columns: 1fr; /* 1 คอลัมน์บนมือถือ */
+  }
+  .predictionCard {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 15px;
+  }
+  .cardActions {
+    justify-content: center; /* ปุ่มอยู่ตรงกลางบนมือถือ */
+  }
+}

@@ -1,0 +1,46 @@
+/* src/components/InputField/InputField.module.css */
+.inputGroup {
+  margin-bottom: 15px; /* Adjust spacing between input fields */
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: #a0aec0; /* Light gray for labels */
+  font-size: 0.95em;
+  font-weight: 600;
+}
+
+.inputField {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #4a5568; /* Darker border */
+  border-radius: 6px;
+  background-color: #2d3748; /* Dark background */
+  color: #e2e8f0; /* Light text color */
+  font-size: 1em;
+  box-sizing: border-box; /* Include padding in width */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #63b3ed; /* Blue highlight on focus */
+  box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.5); /* Soft blue shadow */
+}
+
+.inputField::placeholder {
+  color: #718096; /* Lighter gray for placeholder text */
+}
+
+/* New styles for error states */
+.inputError {
+  border-color: #fc8181; /* Red border for error */
+}
+
+.errorMessage {
+  color: #fc8181; /* Red text for error message */
+  font-size: 0.85em;
+  margin-top: 5px;
+  text-align: left; /* Ensure error messages are left-aligned */
+}

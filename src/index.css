@@ -1,0 +1,96 @@
+/* src/index.css */
+:root {
+  font-family: "Anuphan", "Kanit", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* --- ปรับสีสำหรับ Dark Mode ที่นี่ --- */
+  color-scheme: dark; /* บอกเบราว์เซอร์ว่ารองรับ dark mode */
+  color: #f8d71e; /* สีเหลืองทองสำหรับข้อความหลัก */
+  background-color: #1a202c; /* พื้นหลังสีน้ำเงินเข้มเกือบดำ (Dark Blue-Grey) */
+
+  /* Default Button (ถ้าไม่ได้กำหนด variant จะใช้สีนี้) */
+  --button-bg: #4a5568; /* เทาเข้มสำหรับปุ่มทั่วไป */
+  --button-text: #e2e8f0; /* สีเทาอ่อนสำหรับข้อความบนปุ่ม */
+  --button-hover-border: #f8d71e; /* สีเหลืองทองเมื่อโฮเวอร์ */
+
+  /* Primary Button */
+  --primary-button-bg: #4299e1; /* น้ำเงินสว่างสำหรับปุ่มหลัก */
+  --primary-button-text: #ffffff;
+  --primary-button-hover-bg: #3182ce;
+
+  /* Secondary Button */
+  --secondary-button-bg: #2d3748; /* เทาเข้มกว่าเล็กน้อย */
+  --secondary-button-text: #a0aec0; /* เทาอ่อน */
+  --secondary-button-hover-bg: #4a5568;
+
+  /* Success Button (ใช้กับปุ่ม 3 ตัวบน/ล่าง) */
+  --success-button-bg: #48bb78; /* เขียวสำหรับ Success */
+  --success-button-text: #ffffff;
+  --success-button-hover-bg: #38a169;
+
+  /* Input Field */
+  --input-border: #4a5568; /* ขอบ input สีเทาเข้ม */
+  --input-focus-border: #4299e1; /* ขอบ input เมื่อโฟกัส */
+  --input-bg: #2d3748; /* พื้นหลัง input สีเทาเข้ม */
+  --input-text: #e2e8f0; /* ข้อความใน input */
+  --input-placeholder: #a0aec0; /* Placeholder text */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* เพิ่ม transition เพื่อให้การเปลี่ยนสีระหว่าง Light/Dark Mode ดู Smooth ขึ้น */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Global button styles */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.8em 1.5em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--button-bg); /* ใช้ตัวแปร CSS */
+  color: var(--button-text); /* ใช้ตัวแปร CSS */
+  cursor: pointer;
+  transition: border-color 0.25s, background-color 0.25s, color 0.25s;
+}
+button:hover {
+  border-color: var(--button-hover-border);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto var(--button-hover-border);
+}
+
+/* Global input styles */
+input {
+  padding: 10px 12px;
+  border: 1px solid var(--input-border); /* ใช้ตัวแปร CSS */
+  border-radius: 5px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: var(--input-bg); /* ใช้ตัวแปร CSS */
+  color: var(--input-text); /* ใช้ตัวแปร CSS */
+}
+input::placeholder {
+  color: var(--input-placeholder); /* สี Placeholder */
+}
+input:focus {
+  border-color: var(--input-focus-border); /* ใช้ตัวแปร CSS */
+  outline: none;
+  box-shadow: 0 0 0 0.15rem rgba(66, 153, 225, 0.25); /* เงาสีน้ำเงิน */
+}

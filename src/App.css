@@ -1,0 +1,22 @@
+/* src/App.css */
+/* ไม่ต้องมี background-color หรือ color ที่นี่แล้ว เพราะกำหนดใน index.css แล้ว */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1; /* ทำให้ main content ขยายเต็มพื้นที่ที่เหลือ */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* จัดให้อยู่กึ่งกลางหน้าจอแนวตั้ง */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 15px;
+  }
+}

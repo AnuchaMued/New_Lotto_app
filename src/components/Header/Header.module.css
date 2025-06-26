@@ -1,0 +1,107 @@
+/* src/components/Header/Header.module.css */
+.header {
+  background-color: #2d3748; /* สีเทาเข้มสำหรับ Header */
+  padding: 15px 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* เงาเข้มขึ้น */
+  border-bottom: 1px solid #4a5568; /* เส้นแบ่งสีเทาเข้ม */
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  margin: 0;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  color: #f8d71e; /* สีเหลืองทองสำหรับ Logo */
+  font-weight: 700;
+}
+
+.logoIcon {
+  margin-right: 10px;
+  font-size: 1.5em;
+}
+
+.logoLink {
+  /* เพิ่ม Style สำหรับ Link ของ Logo */
+  color: inherit; /* ให้ใช้สีเดียวกับ .logo */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+.logoLink:hover {
+  color: #ffd700; /* สีเหลืองทองเข้มขึ้นเมื่อโฮเวอร์ */
+}
+
+.navLinks {
+  /* Style สำหรับรายการ Link */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px; /* ระยะห่างระหว่างเมนู */
+}
+
+.navItem {
+  /* Style สำหรับ Link แต่ละอัน */
+  color: #e2e8f0; /* สีเทาอ่อน */
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.navItem:hover {
+  color: #f8d71e; /* สีเหลืองทองเมื่อโฮเวอร์ */
+  background-color: #4a5568; /* พื้นหลังเล็กน้อยเมื่อโฮเวอร์ */
+}
+
+/* --- เพิ่ม Style สำหรับปุ่มออกจากระบบ (navButton) --- */
+.navButton {
+  background: none; /* ไม่มีพื้นหลัง */
+  border: none; /* ไม่มีขอบ */
+  cursor: pointer; /* แสดงเป็นตัวชี้เมื่อวางเมาส์ */
+  font-size: 1.1rem; /* ขนาดตัวอักษรเท่ากับ navItem */
+  font-weight: 500; /* น้ำหนักตัวอักษรเท่ากับ navItem */
+  padding: 5px 10px; /* Padding เท่ากับ navItem */
+  border-radius: 5px; /* มุมโค้งมนเท่ากับ navItem */
+  color: #e2e8f0; /* สีเริ่มต้นเท่ากับ navItem */
+  transition: color 0.2s ease, background-color 0.2s ease; /* Transition เหมือน navItem */
+  /* ตรวจสอบให้แน่ใจว่าไม่มี margin หรือ padding ที่ทำให้มันผิดตำแหน่ง */
+  /* display: flex;  ถ้ามีปัญหาเรื่อง alignment */
+  /* align-items: center; */
+}
+
+.navButton:hover {
+  color: #f8d71e; /* สีเมื่อโฮเวอร์เท่ากับ navItem */
+  background-color: #4a5568; /* พื้นหลังเมื่อโฮเวอร์เท่ากับ navItem */
+}
+/* ---------------------------------------------------- */
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .header {
+    padding: 10px 15px;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .logoIcon {
+    font-size: 1.2em;
+  }
+
+  .navLinks {
+    /* บนมือถืออาจจะซ่อนหรือเปลี่ยนไปใช้ Hamburger menu (แต่ตอนนี้แค่ซ่อนไปก่อน) */
+    display: none;
+  }
+}

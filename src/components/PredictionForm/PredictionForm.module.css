@@ -1,0 +1,32 @@
+/* src/components/PredictionForm/PredictionForm.module.css */
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.formGroup {
+  width: 100%;
+  max-width: 350px;
+  margin-bottom: 0; /* Changed from 15px if Button component already provides margin */
+}
+
+.errorText {
+  color: #fc8181; /* Red color for errors */
+  font-size: 0.9em;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.loadingText {
+  color: #63b3ed; /* Blue color for loading messages */
+  margin-top: 15px;
+  font-style: italic;
+}
+
+.creditCostInput {
+  text-align: center;
+}

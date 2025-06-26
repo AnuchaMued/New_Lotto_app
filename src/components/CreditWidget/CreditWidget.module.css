@@ -1,0 +1,67 @@
+/* src/components/CreditWidget/CreditWidget.module.css */
+
+.creditWidget {
+  background-color: #3c4251; /* สีพื้นหลังของ widget รวม */
+  border-radius: 10px;
+  padding: 25px;
+  border: 1px solid #636b78;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  display: flex; /* ใช้ flex เพื่อจัดวางภายใน */
+  flex-direction: column; /* จัดเรียงองค์ประกอบในแนวตั้ง */
+  align-items: center; /* จัดกลางในแนวนอน */
+  gap: 20px; /* ระยะห่างระหว่างส่วนเครดิตคงเหลือและส่วนเติมเครดิต */
+  max-width: 450px; /* จำกัดความกว้างสูงสุดของ widget */
+  margin-left: auto; /* จัดกลาง widget ในแนวนอน */
+  margin-right: auto; /* จัดกลาง widget ในแนวนอน */
+}
+
+.creditBalanceInfo {
+  width: 100%; /* ให้ส่วนแสดงเครดิตเต็มความกว้างของ widget */
+}
+
+.creditTopUpSection {
+  width: 100%; /* ให้ส่วนเติมเครดิตเต็มความกว้างของ widget */
+}
+
+.sectionHeader {
+  font-size: 1.6rem;
+  color: #63b3ed; /* สีน้ำเงินสำหรับหัวข้อหลัก */
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.creditAmountValue {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #f8d71e; /* สีเหลืองทองสำหรับจำนวนเครดิต */
+  margin-bottom: 0;
+}
+
+.creditTopUpSection .sectionHeader {
+  color: #f8d71e; /* สีเหลืองทองสำหรับหัวข้อเติมเครดิต */
+}
+
+.creditRequestButton {
+  margin-top: 20px;
+}
+
+.errorText {
+  /* ต้องย้ายมาที่นี่ด้วย เพราะใช้ในส่วนเติมเครดิต */
+  color: #fc8181;
+  font-size: 0.9em;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Responsive adjustments for CreditWidget */
+@media (max-width: 768px) {
+  .creditWidget {
+    padding: 20px 15px; /* ลด padding */
+    margin-left: auto; /* ยังคงจัดกลาง */
+    margin-right: auto; /* ยังคงจัดกลาง */
+    max-width: unset; /* ให้ขยายเต็มความกว้าง */
+    width: 100%; /* เต็มความกว้างของ parent */
+  }
+}

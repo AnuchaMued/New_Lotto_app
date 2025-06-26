@@ -1,0 +1,32 @@
+/* src/components/BetTypeSelector/BetTypeSelector.module.css */
+
+.betTypeSelection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.betTypeButton {
+  flex-basis: calc(50% - 7.5px);
+  max-width: 180px;
+  font-size: 0.95rem;
+  padding: 12px 15px;
+  text-align: center;
+}
+
+/* Responsive adjustments for BetTypeSelector */
+@media (min-width: 768px) {
+  .betTypeButton {
+    flex-basis: unset;
+    width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .betTypeButton {
+    flex-basis: 100%;
+    max-width: unset;
+  }
+}

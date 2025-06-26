@@ -1,0 +1,56 @@
+/* src/components/LottoTypeSelector/LottoTypeSelector.module.css */
+
+.mainLottoSelection {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: #3c4251;
+  border-radius: 10px;
+  border: 1px solid #636b78;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Note: .sectionHeader is a common style, you might keep a base one in HomePage.module.css
+   but define specific overrides here if needed. For now, assume it's broadly defined. */
+.sectionHeader {
+  /* อาจจะนำมาจาก base sectionHeader แต่กำหนด margin เฉพาะ */
+  font-size: 1.6rem;
+  color: #63b3ed;
+  margin-bottom: 25px; /* เพิ่ม margin bottom */
+  font-weight: 600;
+  text-align: center;
+}
+
+.mainLottoButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.mainLottoButton {
+  flex: 1; /* Allow buttons to grow */
+  min-width: 150px; /* Minimum width for buttons */
+  max-width: 200px; /* Max width for buttons */
+  font-size: 1.1rem;
+  padding: 15px 20px;
+}
+
+/* Responsive adjustments for LottoTypeSelector */
+@media (max-width: 768px) {
+  .mainLottoSelection {
+    padding: 20px 15px;
+    max-width: unset;
+    width: 100%;
+  }
+  .mainLottoButtons {
+    flex-direction: column; /* Stack buttons vertically on small screens */
+  }
+  .mainLottoButton {
+    min-width: unset; /* Allow to shrink */
+    max-width: unset; /* Allow to fill */
+    width: 100%; /* Full width */
+  }
+}
